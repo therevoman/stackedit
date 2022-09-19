@@ -1,11 +1,11 @@
 {
   "name": "stackedit",
-  "version": "5.14.10",
-  "description": "Free, open-source, full-featured Markdown editor",
-  "author": "Benoit Schweblin",
+  "version": "5.15.12",
+  "description": "免费, 开源, 功能齐全的 Markdown 编辑器",
+  "author": "Benoit Schweblin, 豆萁",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/benweet/stackedit/issues"
+    "url": "https://github.com/mafgwo/stackedit/issues"
   },
   "main": "index.js",
   "scripts": {
@@ -100,6 +100,7 @@
     "jest": "^23.0.0",
     "jest-raw-loader": "^1.0.1",
     "jest-serializer-vue": "^0.3.0",
+    "js-md5": "^0.7.3",
     "node-sass": "^4.0.0",
     "npm-bump": "^0.0.23",
     "offline-plugin": "^5.0.3",

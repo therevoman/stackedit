@@ -51,7 +51,7 @@ export default new Provider({
     });
     return syncLocation;
   },
-  async publish(token, html, metadata, publishLocation) {
+  async publish(token, html, metadata, publishLocation, commitMessage) {
     try {
       // Get the last sha
       await this.downloadContent(token, publishLocation);
@@ -65,6 +65,7 @@ export default new Provider({
       token,
       content: html,
       sha,
+      commitMessage,
     });
     return publishLocation;
   },
@@ -103,7 +104,7 @@ export default new Provider({
         ...syncLocation,
         fileId: item.id,
       });
-      store.dispatch('notification/info', `${store.getters['file/current'].name} was imported from GitHub.`);
+      store.dispatch('notification/info', `${store.getters['file/current'].name}已从GitHub导入。`);
     }
   },
   makeLocation(token, owner, repo, branch, path) {

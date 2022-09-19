@@ -77,18 +77,18 @@ turndown:
   linkStyle: inlined
   linkReferenceStyle: full
 
-# GitHub/GitLab commit messages
+# GitHub/GitLab/Gitee/Gitea commit messages
 git:
-  createFileMessage: '{{path}} created from https://stackedit.io/'
-  updateFileMessage: '{{path}} updated from https://stackedit.io/'
-  deleteFileMessage: '{{path}} deleted from https://stackedit.io/'
+  createFileMessage: '{{path}} created from https://stackedit.cn/'
+  updateFileMessage: '{{path}} updated from https://stackedit.cn/'
+  deleteFileMessage: '{{path}} deleted from https://stackedit.cn/'
 
 # Default content for new files
 newFileContent: |
 
 
 
-  > Written with [StackEdit](https://stackedit.io/).
+  > Written with [StackEdit中文版](https://stackedit.cn/).
 
 # Default properties for new files
 newFileProperties: |

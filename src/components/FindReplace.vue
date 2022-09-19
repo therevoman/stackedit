@@ -1,6 +1,6 @@
 <template>
   <div class="find-replace" @keydown.esc.stop="onEscape">
-    <button class="find-replace__close-button button not-tabbable" @click="close()" v-title="'Close'">
+    <button class="find-replace__close-button button not-tabbable" @click="close()" v-title="'关闭'">
       <icon-close></icon-close>
     </button>
     <div class="find-replace__row">
@@ -14,8 +14,8 @@
           <button class="find-replace__button find-replace__button--find-option button" :class="{'find-replace__button--on': findUseRegexp}" @click="findUseRegexp = !findUseRegexp" title="Regular expression">.<sup>⁕</sup></button>
         </div>
         <div class="flex flex--row">
-          <button class="find-replace__button button" @click="find('backward')">Previous</button>
-          <button class="find-replace__button button" @click="find('forward')">Next</button>
+          <button class="find-replace__button button" @click="find('backward')">上一个</button>
+          <button class="find-replace__button button" @click="find('forward')">下一个</button>
         </div>
       </div>
     </div>
@@ -24,8 +24,8 @@
         <input type="text" class="find-replace__text-input find-replace__text-input--replace text-input" @keydown.enter="replace" v-model="replaceText">
       </div>
       <div class="find-replace__row flex flex--row flex--end">
-        <button class="find-replace__button button" @click="replace">Replace</button>
-        <button class="find-replace__button button" @click="replaceAll">All</button>
+        <button class="find-replace__button button" @click="replace">替换</button>
+        <button class="find-replace__button button" @click="replaceAll">全部替换</button>
       </div>
     </div>
   </div>
@@ -307,20 +307,36 @@ export default {
   color: rgba(0, 0, 0, 0.25);
   text-transform: none;
 
+  .app--dark & {
+    color: rgba(255, 255, 255, 0.25);
+  }
+
   &:active,
   &:focus,
   &:hover {
     color: rgba(0, 0, 0, 0.25);
+
+    .app--dark & {
+      color: rgba(255, 255, 255, 0.25);
+    }
   }
 }
 
 .find-replace__button--on {
   color: rgba(0, 0, 0, 0.67);
 
+  .app--dark & {
+    color: rgba(255, 255, 255, 0.67);
+  }
+
   &:active,
   &:focus,
   &:hover {
     color: rgba(0, 0, 0, 0.67);
+
+    .app--dark & {
+      color: rgba(255, 255, 255, 0.67);
+    }
   }
 }
 
@@ -343,10 +359,18 @@ export default {
   padding: 2px;
   color: rgba(0, 0, 0, 0.5);
 
+  .app--dark & {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
   &:active,
   &:focus,
   &:hover {
     color: rgba(0, 0, 0, 0.75);
+
+    .app--dark & {
+      color: rgba(255, 255, 255, 0.75);
+    }
   }
 }
 
@@ -359,6 +383,10 @@ export default {
 .find-replace-highlighting {
   background-color: $highlighting-color;
   color: $editor-color-light !important;
+
+  .app--dark & {
+    background-color: $dark-highlighting-color;
+  }
 }
 
 .find-replace-selection {

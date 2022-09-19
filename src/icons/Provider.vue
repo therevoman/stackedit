@@ -11,7 +11,6 @@ export default {
     classState() {
       switch (this.providerId) {
         case 'googleDrive':
-        case 'googleDriveAppData':
         case 'googleDriveWorkspace':
           return 'google-drive';
         case 'googlePhotos':
@@ -22,10 +21,15 @@ export default {
           return 'github';
         case 'gitlabWorkspace':
           return 'gitlab';
+        case 'giteaWorkspace':
+          return 'gitea';
         case 'bloggerPage':
           return 'blogger';
         case 'couchdbWorkspace':
           return 'couchdb';
+        case 'giteeAppData':
+        case 'giteeWorkspace':
+          return 'gitee';
         default:
           return this.providerId;
       }
@@ -57,10 +61,18 @@ export default {
 
 .icon-provider--github {
   background-image: url(../assets/iconGithub.svg);
+
+  .app--dark & {
+    background-image: url(../assets/iconGithubDark.svg);
+  }
 }
 
 .icon-provider--gitlab {
   background-image: url(../assets/iconGitlab.svg);
+}
+
+.icon-provider--gitea {
+  background-image: url(../assets/iconGitea.svg);
 }
 
 .icon-provider--google {
@@ -85,5 +97,17 @@ export default {
 
 .icon-provider--couchdb {
   background-image: url(../assets/iconCouchdb.svg);
+}
+
+.icon-provider--gitee {
+  background-image: url(../assets/iconGitee.svg);
+}
+
+.icon-provider--smms {
+  background-image: url(../assets/iconSmms.svg);
+}
+
+.icon-provider--custom {
+  background-image: url(../assets/iconCustom.svg);
 }
 </style>

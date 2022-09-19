@@ -4,10 +4,12 @@ import utils from './utils';
 import diffUtils from './diffUtils';
 import networkSvc from './networkSvc';
 import providerRegistry from './providers/common/providerRegistry';
-import googleDriveAppDataProvider from './providers/googleDriveAppDataProvider';
+import giteeAppDataProvider from './providers/giteeAppDataProvider';
 import './providers/couchdbWorkspaceProvider';
 import './providers/githubWorkspaceProvider';
+import './providers/giteeWorkspaceProvider';
 import './providers/gitlabWorkspaceProvider';
+import './providers/giteaWorkspaceProvider';
 import './providers/googleDriveWorkspaceProvider';
 import tempFileSvc from './tempFileSvc';
 import workspaceSvc from './workspaceSvc';
@@ -220,7 +222,7 @@ const createSyncLocation = (syncLocation) => {
 
       store.commit('syncedContent/patchItem', newSyncedContent);
       workspaceSvc.addSyncLocation(updatedSyncLocation);
-      store.dispatch('notification/info', `A new synchronized location was added to "${currentFile.name}".`);
+      store.dispatch('notification/info', `将新的同步位置添加到"${currentFile.name}"中。`);
     },
   );
 };
@@ -537,7 +539,7 @@ const syncDataItem = async (dataId) => {
     || store.state.data.lsItemsById[dataId];
 
   const oldItem = getItem();
-  const oldSyncData = store.getters['data/syncDataByItemId'][dataId];
+  const oldSyncData = store.getters['data/syncDataById'][dataId];
   // Sync if item hash and syncData hash are out of sync
   if (oldSyncData && oldItem && oldItem.hash === oldSyncData.hash) {
     return;
@@ -546,7 +548,7 @@ const syncDataItem = async (dataId) => {
   const token = workspaceProvider.getToken();
   const { item } = updateSyncData(await workspaceProvider.downloadWorkspaceData({
     token,
-    syncData: oldSyncData,
+    syncData: oldSyncData || { id: dataId },
   }));
 
   const serverItem = item;
@@ -601,14 +603,14 @@ const syncDataItem = async (dataId) => {
     updateSyncData(await workspaceProvider.uploadWorkspaceData({
       token,
       item: mergedItem,
-      syncData: store.getters['data/syncDataByItemId'][dataId],
+      syncData: store.getters['data/syncDataById'][dataId],
       ifNotTooLate: tooLateChecker(restartContentSyncAfter),
     }));
   }
 
   // Copy sync data into data sync data
   store.dispatch('data/patchDataSyncDataById', {
-    [dataId]: utils.deepCopy(store.getters['data/syncDataByItemId'][dataId]),
+    [dataId]: utils.deepCopy(store.getters['data/syncDataById'][dataId]),
   });
 };
 
@@ -663,6 +665,8 @@ const syncWorkspace = async (skipContents = false) => {
             || (isGit && item.type === 'folder')
             // Add file only if content has been added
             || (item.type === 'file' && !syncDataByItemId[`${id}/content`])
+            // 如果是发布位置 文件不存在了 则不需要更新 等待后续删除
+            || (item.type === 'publishLocation' && (!item.fileId || !syncDataByItemId[`${item.fileId}/content`]))
           ) {
             return null;
           }
@@ -686,13 +690,16 @@ const syncWorkspace = async (skipContents = false) => {
     await utils.awaitSome(() => ifNotTooLate(async () => {
       let getItem;
       let getFileItem;
+      let getOriginFileItem;
       if (store.getters['workspace/currentWorkspaceIsGit']) {
         const { itemsByGitPath } = store.getters;
         getItem = syncData => itemsByGitPath[syncData.id];
+        getOriginFileItem = syncData => itemsByGitPath[syncData.fileId];
         getFileItem = syncData => itemsByGitPath[syncData.id.slice(1)]; // Remove leading /
       } else {
         const { allItemsById } = store.getters;
         getItem = syncData => allItemsById[syncData.itemId];
+        getOriginFileItem = syncData => allItemsById[syncData.fileId];
         getFileItem = syncData => allItemsById[syncData.itemId.split('/')[0]];
       }
 
@@ -705,6 +712,8 @@ const syncWorkspace = async (skipContents = false) => {
             || syncData.type === 'data'
             // Remove content only if file has been removed
             || (syncData.type === 'content' && getFileItem(syncData))
+            // 发布位置 如果对应的文件不存在了 也需要删除
+            || (syncData.type === 'publishLocation' && syncData.fileId && getOriginFileItem(syncData))
           ) {
             return null;
           }
@@ -726,11 +735,11 @@ const syncWorkspace = async (skipContents = false) => {
 
     // Sync settings, workspaces and badges only in the main workspace
     if (workspace.id === 'main') {
-      await syncDataItem('settings');
+      // await syncDataItem('settings');
       await syncDataItem('workspaces');
       await syncDataItem('badgeCreations');
+      // await syncDataItem('templates');
     }
-    await syncDataItem('templates');
 
     if (!skipContents) {
       const currentFileId = store.getters['file/current'].id;
@@ -819,7 +828,7 @@ const requestSync = (addTriggerSyncBadge = false) => {
         clearInterval(intervalId);
         if (!isSyncPossible()) {
           // Cancel sync
-          throw new Error('Sync not possible.');
+          throw new Error('无法同步。');
         }
 
         // Determine if we have to clean files
@@ -886,7 +895,7 @@ export default {
     // Try to find a suitable workspace sync provider
     workspaceProvider = providerRegistry.providersById[utils.queryParams.providerId];
     if (!workspaceProvider || !workspaceProvider.initWorkspace) {
-      workspaceProvider = googleDriveAppDataProvider;
+      workspaceProvider = giteeAppDataProvider;
     }
     const workspace = await workspaceProvider.initWorkspace();
     // Fix the URL hash
@@ -936,7 +945,7 @@ export default {
 
       // Unload contents from memory periodically
       utils.setInterval(() => {
-        // Wait for sync and publish to finish
+        // Wait for sync and 发布到finish
         if (store.state.queue.isEmpty) {
           localDbSvc.unloadContents();
         }

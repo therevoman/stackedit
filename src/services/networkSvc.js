@@ -69,7 +69,7 @@ export default {
           await new Promise((resolve, reject) => {
             script.onload = resolve;
             script.onerror = reject;
-            script.src = `https://apis.google.com/js/api.js?${Date.now()}`;
+            script.src = `https://www.gstatic.cn/charts/loader.js?${Date.now()}`;
             try {
               document.head.appendChild(script); // This can fail with bad network
               timeout = setTimeout(reject, networkTimeout);
@@ -89,9 +89,9 @@ export default {
       if (store.state.offline !== offline) {
         store.commit('setOffline', offline);
         if (offline) {
-          store.dispatch('notification/error', 'You are offline.');
+          store.dispatch('notification/error', '已离线！');
         } else {
-          store.dispatch('notification/info', 'You are back online!');
+          store.dispatch('notification/info', '恢复上线了！');
           this.getServerConf();
         }
       }
@@ -247,8 +247,14 @@ export default {
     if (sanitizedConfig.body && typeof sanitizedConfig.body === 'object') {
       sanitizedConfig.body = JSON.stringify(sanitizedConfig.body);
       sanitizedConfig.headers['Content-Type'] = 'application/json';
+    } else if (sanitizedConfig.formData) {
+      const data = new FormData();
+      Object.keys(sanitizedConfig.formData).forEach((key) => {
+        const formVal = sanitizedConfig.formData[key];
+        data.append(key, formVal);
+      });
+      sanitizedConfig.formData = data;
     }
-
     const attempt = async () => {
       try {
         return await new Promise((resolve, reject) => {
@@ -315,7 +321,7 @@ export default {
           if (sanitizedConfig.blob) {
             xhr.responseType = 'blob';
           }
-          xhr.send(sanitizedConfig.body || null);
+          xhr.send(sanitizedConfig.body || sanitizedConfig.formData || null);
         });
       } catch (err) {
         // Try again later in case of retriable error

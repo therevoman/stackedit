@@ -8,6 +8,8 @@ const dropboxAppKey = process.env.DROPBOX_APP_KEY;
 const dropboxAppKeyFull = process.env.DROPBOX_APP_KEY_FULL;
 const githubClientId = process.env.GITHUB_CLIENT_ID;
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET;
+const giteeClientId = process.env.GITEE_CLIENT_ID;
+const giteeClientSecret = process.env.GITEE_CLIENT_SECRET;
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleApiKey = process.env.GOOGLE_API_KEY;
 const wordpressClientId = process.env.WORDPRESS_CLIENT_ID;
@@ -22,6 +24,8 @@ exports.values = {
   dropboxAppKeyFull,
   githubClientId,
   githubClientSecret,
+  giteeClientId,
+  giteeClientSecret,
   googleClientId,
   googleApiKey,
   wordpressClientId,

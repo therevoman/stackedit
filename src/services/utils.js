@@ -182,6 +182,14 @@ export default {
       .replace(/\+/g, '-') // Replace `+` with `-`
       .replace(/=+$/, ''); // Remove trailing `=`
   },
+  encodeFiletoBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(',').pop());
+      reader.onerror = error => reject(error);
+    });
+  },
   decodeBase64(str) {
     // In case of URL safe base64
     const sanitizedStr = str.replace(/_/g, '/').replace(/-/g, '+');
@@ -294,6 +302,10 @@ export default {
   },
   parseGitlabProjectPath(url) {
     const parsedProject = url && url.match(/^https:\/\/[^/]+\/(.+?)(?:\.git|\/)?$/);
+    return parsedProject && parsedProject[1];
+  },
+  parseGiteaProjectPath(url) {
+    const parsedProject = url && url.match(/^http[s]?:\/\/[^/]+\/(.+?)(?:\.git|\/)?$/);
     return parsedProject && parsedProject[1];
   },
   createHiddenIframe(url) {

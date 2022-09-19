@@ -1,9 +1,9 @@
 <template>
   <div class="modal" v-if="config" @keydown.esc.stop="onEscape" @keydown.tab="onTab" @focusin="onFocusInOut" @focusout="onFocusInOut">
-    <div class="modal__sponsor-banner" v-if="!isSponsor">
-      StackEdit is <a class="not-tabbable" target="_blank" href="https://github.com/benweet/stackedit/">open source</a>, please consider
+    <!-- <div class="modal__sponsor-banner" v-if="!isSponsor">
+      StackEdit is <a class="not-tabbable" target="_blank" href="https://github.com/mafgwo/stackedit/">open source</a>, please consider
       <a class="not-tabbable" href="javascript:void(0)" @click="sponsor">sponsoring</a> for just $5.
-    </div>
+    </div> -->
     <component v-if="currentModalComponent" :is="currentModalComponent"></component>
     <modal-inner v-else aria-label="Dialog">
       <div class="modal__content" v-html="simpleModal.contentHtml(config)"></div>
@@ -20,7 +20,7 @@ import { mapGetters } from 'vuex';
 import simpleModals from '../data/simpleModals';
 import editorSvc from '../services/editorSvc';
 import syncSvc from '../services/syncSvc';
-import googleHelper from '../services/providers/helpers/googleHelper';
+import giteeHelper from '../services/providers/helpers/giteeHelper';
 import store from '../store';
 
 import ModalInner from './modals/common/ModalInner';
@@ -39,6 +39,7 @@ import WorkspaceManagementModal from './modals/WorkspaceManagementModal';
 import AccountManagementModal from './modals/AccountManagementModal';
 import BadgeManagementModal from './modals/BadgeManagementModal';
 import SponsorModal from './modals/SponsorModal';
+import CommitMessageModal from './modals/CommitMessageModal';
 
 // Providers
 import GooglePhotoModal from './modals/providers/GooglePhotoModal';
@@ -54,13 +55,25 @@ import GithubOpenModal from './modals/providers/GithubOpenModal';
 import GithubSaveModal from './modals/providers/GithubSaveModal';
 import GithubWorkspaceModal from './modals/providers/GithubWorkspaceModal';
 import GithubPublishModal from './modals/providers/GithubPublishModal';
+import GithubImgStorageModal from './modals/providers/GithubImgStorageModal';
 import GistSyncModal from './modals/providers/GistSyncModal';
 import GistPublishModal from './modals/providers/GistPublishModal';
+import GiteeAccountModal from './modals/providers/GiteeAccountModal';
+import GiteeOpenModal from './modals/providers/GiteeOpenModal';
+import GiteeSaveModal from './modals/providers/GiteeSaveModal';
+import GiteeWorkspaceModal from './modals/providers/GiteeWorkspaceModal';
+import GiteePublishModal from './modals/providers/GiteePublishModal';
 import GitlabAccountModal from './modals/providers/GitlabAccountModal';
 import GitlabOpenModal from './modals/providers/GitlabOpenModal';
 import GitlabPublishModal from './modals/providers/GitlabPublishModal';
 import GitlabSaveModal from './modals/providers/GitlabSaveModal';
 import GitlabWorkspaceModal from './modals/providers/GitlabWorkspaceModal';
+import GiteaAccountModal from './modals/providers/GiteaAccountModal';
+import GiteaOpenModal from './modals/providers/GiteaOpenModal';
+import GiteaPublishModal from './modals/providers/GiteaPublishModal';
+import GiteaSaveModal from './modals/providers/GiteaSaveModal';
+import GiteaWorkspaceModal from './modals/providers/GiteaWorkspaceModal';
+import GiteaImgStorageModal from './modals/providers/GiteaImgStorageModal';
 import WordpressPublishModal from './modals/providers/WordpressPublishModal';
 import BloggerPublishModal from './modals/providers/BloggerPublishModal';
 import BloggerPagePublishModal from './modals/providers/BloggerPagePublishModal';
@@ -68,6 +81,8 @@ import ZendeskAccountModal from './modals/providers/ZendeskAccountModal';
 import ZendeskPublishModal from './modals/providers/ZendeskPublishModal';
 import CouchdbWorkspaceModal from './modals/providers/CouchdbWorkspaceModal';
 import CouchdbCredentialsModal from './modals/providers/CouchdbCredentialsModal';
+import SmmsAccountModal from './modals/providers/SmmsAccountModal';
+import CustomAccountModal from './modals/providers/CustomAccountModal';
 
 const getTabbables = container => container.querySelectorAll('a[href], button, .textfield, input[type=checkbox]')
   // Filter enabled and visible element
@@ -91,6 +106,7 @@ export default {
     AccountManagementModal,
     BadgeManagementModal,
     SponsorModal,
+    CommitMessageModal,
     // Providers
     GooglePhotoModal,
     GoogleDriveAccountModal,
@@ -105,13 +121,25 @@ export default {
     GithubSaveModal,
     GithubWorkspaceModal,
     GithubPublishModal,
+    GithubImgStorageModal,
     GistSyncModal,
     GistPublishModal,
+    GiteeAccountModal,
+    GiteeOpenModal,
+    GiteeSaveModal,
+    GiteeWorkspaceModal,
+    GiteePublishModal,
     GitlabAccountModal,
     GitlabOpenModal,
     GitlabPublishModal,
     GitlabSaveModal,
     GitlabWorkspaceModal,
+    GiteaAccountModal,
+    GiteaOpenModal,
+    GiteaPublishModal,
+    GiteaSaveModal,
+    GiteaWorkspaceModal,
+    GiteaImgStorageModal,
     WordpressPublishModal,
     BloggerPublishModal,
     BloggerPagePublishModal,
@@ -119,6 +147,8 @@ export default {
     ZendeskPublishModal,
     CouchdbWorkspaceModal,
     CouchdbCredentialsModal,
+    SmmsAccountModal,
+    CustomAccountModal,
   },
   computed: {
     ...mapGetters([
@@ -148,7 +178,7 @@ export default {
         if (!store.getters['workspace/sponsorToken']) {
           // User has to sign in
           await store.dispatch('modal/open', 'signInForSponsorship');
-          await googleHelper.signin();
+          await giteeHelper.signin();
           syncSvc.requestSync();
         }
         if (!store.getters.isSponsor) {
@@ -244,6 +274,10 @@ export default {
   border-radius: $border-radius-base;
   position: relative;
   overflow: hidden;
+
+  .app--dark & {
+    background-color: #383c4a;
+  }
 
   &::before {
     content: '';

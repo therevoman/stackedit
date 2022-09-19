@@ -185,7 +185,7 @@ export default {
 }
 
 $preview-background-light: #f3f3f3;
-$preview-background-dark: #252525;
+$preview-background-dark: #444;
 
 .layout__panel--preview,
 .layout__panel--button-bar {
@@ -208,6 +208,10 @@ $preview-background-dark: #252525;
 .layout__panel--explorer,
 .layout__panel--side-bar {
   background-color: #ddd;
+
+  .app--dark & {
+    background-color: #383c4a;
+  }
 }
 
 .layout__panel--find-replace {
@@ -218,5 +222,9 @@ $preview-background-dark: #252525;
   width: 300px;
   height: auto;
   border-top-right-radius: $border-radius-base;
+
+  .app--dark & {
+    background-color: #4d5160;
+  }
 }
 </style>

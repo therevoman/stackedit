@@ -22,7 +22,7 @@ export default {
       Object.entries(rootGetters['data/workspaces']).forEach(([id, workspace]) => {
         const sanitizedWorkspace = {
           id,
-          providerId: 'googleDriveAppData',
+          providerId: 'giteeAppData',
           sub: mainWorkspaceToken && mainWorkspaceToken.sub,
           ...workspace,
         };
@@ -44,14 +44,20 @@ export default {
       workspacesById[currentWorkspaceId] || mainWorkspace,
     currentWorkspaceIsGit: (state, { currentWorkspace }) =>
       currentWorkspace.providerId === 'githubWorkspace'
-      || currentWorkspace.providerId === 'gitlabWorkspace',
+      || currentWorkspace.providerId === 'giteeWorkspace'
+      || currentWorkspace.providerId === 'gitlabWorkspace'
+      || currentWorkspace.providerId === 'giteaWorkspace'
+      || currentWorkspace.providerId === 'giteeAppData',
     currentWorkspaceHasUniquePaths: (state, { currentWorkspace }) =>
       currentWorkspace.providerId === 'githubWorkspace'
-      || currentWorkspace.providerId === 'gitlabWorkspace',
+      || currentWorkspace.providerId === 'giteeWorkspace'
+      || currentWorkspace.providerId === 'gitlabWorkspace'
+      || currentWorkspace.providerId === 'giteaWorkspace'
+      || currentWorkspace.providerId === 'giteeAppData',
     lastSyncActivityKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastSyncActivity`,
     lastFocusKey: (state, { currentWorkspace }) => `${currentWorkspace.id}/lastWindowFocus`,
     mainWorkspaceToken: (state, getters, rootState, rootGetters) =>
-      utils.someResult(Object.values(rootGetters['data/googleTokensBySub']), (token) => {
+      utils.someResult(Object.values(rootGetters['data/giteeTokensBySub']), (token) => {
         if (token.isLogin) {
           return token;
         }
@@ -63,8 +69,12 @@ export default {
           return rootGetters['data/googleTokensBySub'][currentWorkspace.sub];
         case 'githubWorkspace':
           return rootGetters['data/githubTokensBySub'][currentWorkspace.sub];
+        case 'giteeWorkspace':
+          return rootGetters['data/giteeTokensBySub'][currentWorkspace.sub];
         case 'gitlabWorkspace':
           return rootGetters['data/gitlabTokensBySub'][currentWorkspace.sub];
+        case 'giteaWorkspace':
+          return rootGetters['data/giteaTokensBySub'][currentWorkspace.sub];
         case 'couchdbWorkspace':
           return rootGetters['data/couchdbTokensBySub'][currentWorkspace.id];
         default:
@@ -74,12 +84,16 @@ export default {
     loginType: (state, { currentWorkspace }) => {
       switch (currentWorkspace.providerId) {
         case 'googleDriveWorkspace':
-        default:
           return 'google';
         case 'githubWorkspace':
           return 'github';
+        case 'giteeWorkspace':
+        default:
+          return 'gitee';
         case 'gitlabWorkspace':
           return 'gitlab';
+        case 'giteaWorkspace':
+          return 'gitea';
       }
     },
     loginToken: (state, { loginType, currentWorkspace }, rootState, rootGetters) => {

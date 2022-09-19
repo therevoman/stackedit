@@ -1,22 +1,121 @@
-# StackEdit
+# StackEdit中文版
 
-[![Build Status](https://img.shields.io/travis/benweet/stackedit.svg?style=flat)](https://travis-ci.org/benweet/stackedit) [![NPM version](https://img.shields.io/npm/v/stackedit.svg?style=flat)](https://www.npmjs.org/package/stackedit)
+**StackEdit中文版官方地址：https://stackedit.cn**
 
-> Full-featured, open-source Markdown editor based on PageDown, the Markdown library used by Stack Overflow and the other Stack Exchange sites.
+如果你喜欢该项目，请点一下Star，您的肯定是作者最大的动力！
 
-https://stackedit.io/
+StackEdit中文版的docker镜像地址：[mafgwo/stackedit](https://hub.docker.com/r/mafgwo/stackedit)
 
-### Ecosystem
+**示例截图-暗色主题**
+![](./images/dark.png)
 
-- [Chrome app](https://chrome.google.com/webstore/detail/iiooodelglhkcpgbajoejffhijaclcdg)
-- NEW! Embed StackEdit in any website with [stackedit.js](https://github.com/benweet/stackedit.js)
-- NEW! [Chrome extension](https://chrome.google.com/webstore/detail/ajehldoplanpchfokmeempkekhnhmoha) that uses stackedit.js
-- [Community](https://community.stackedit.io/)
+**示例截图-亮色主题**
+![](./images/light.png)
 
-### Build
+**示例截图-支持的文档空间**
+![](./images/workspace.png)
+
+**示例截图-支持的图床**
+![](./images/imageBed.png)
+
+**示例截图-支持文件搜索**
+![](./images/fileSearch.png)
+
+## 相比国外开源版本的区别：
+- 修复了Github授权登录问题
+- 支持了Gitee仓库（2022-05-25）
+- 支持了Gitea仓库（2022-05-25）
+- 汉化（2022-06-01）
+- 主文档空间从GoogleDrive切换为Gitee（2022-06-04）
+- 支持SM.MS图床粘贴/拖拽图片自动上传（2022-07-01）
+- 支持Gitea图床粘贴/拖拽图片自动上传（2022-07-02）
+- 支持自定义图床粘贴/拖拽图片自动上传（2022-07-04）
+- 支持GitHub图床粘贴/拖拽图片自动上传（2022-07-31）
+- 支持了右上角一键切换主题，补全了深色主题的样式（2022-08-07）
+- 编辑与预览区域样式优化（2022-08-10）
+- 左边栏文件资源管理支持搜索文件（2022-08-17）
+- 支持[TOC]目录（2022-09-04）
+- 发布支持填写提交信息[针对Gitee、GitHub、Gitea、Gitlab]（2022-09-10）
+
+## 国外开源版本弊端：
+- 作者已经不维护了
+- Github授权登录存在问题
+- 不支持国内常用Gitee
+- 强依赖GoogleDrive，而Google Drive在国内不能正常访问
+
+## 部署说明
+> 建议docker-compose方式部署，其他部署方式如遇到问题欢迎提issue。
+
+`docker-compose.yml`如下：
+
+```yaml
+version: "3.7"
+services:
+  stackedit:
+    image: mafgwo/stackedit:【docker中央仓库找到最新版本】
+    container_name: stackedit
+    environment:
+      - LISTENING_PORT=8080
+      - ROOT_URL=/
+      - USER_BUCKET_NAME=root
+      - DROPBOX_APP_KEY=【不需要支持则删掉】
+      - DROPBOX_APP_KEY_FULL=【不需要支持则删掉】
+      - GITHUB_CLIENT_ID=【不需要支持则删掉】
+      - GITHUB_CLIENT_SECRET=【不需要支持则删掉】
+      - GITEE_CLIENT_ID=【不需要支持则删掉】
+      - GITEE_CLIENT_SECRET=【不需要支持则删掉】
+      - GOOGLE_CLIENT_ID=【不需要支持则删掉】
+      - GOOGLE_API_KEY=【不需要支持则删掉】
+    ports:
+      - 8080:8080/tcp
+    network_mode: bridge
+    restart: always
+```
+
+docker-compose方式的启动或停止命令
+```bash
+# 在 docker-compose.yml 文件目录下 启动命令 
+docker-compose up -d
+# 在 docker-compose.yml 文件目录下 停止命令 
+docker-compose down
+# 更新镜像只需要修改docker-compose.yml中镜像版本执行再停止、启动命令即可
+```
+
+或者可以直接通过Docker命名直接启动，命令如下：
 
 ```bash
-# install dependencies
+docker run -itd --name stackedit \
+  -p 8080:8080 \
+  -e LISTENING_PORT=8080 \
+  -e ROOT_URL=/ \
+  -e USER_BUCKET_NAME=root \
+  -e DROPBOX_APP_KEY=【不需要支持则删掉】 \
+  -e DROPBOX_APP_KEY_FULL=【不需要支持则删掉】 \
+  -e GITHUB_CLIENT_ID=【不需要支持则删掉】 \
+  -e GITHUB_CLIENT_SECRET=【不需要支持则删掉】 \
+  -e GITEE_CLIENT_ID=【不需要支持则删掉】 \
+  -e GITEE_CLIENT_SECRET=【不需要支持则删掉】 \
+  -e GOOGLE_CLIENT_ID=【不需要支持则删掉】 \
+  -e GOOGLE_API_KEY=【不需要支持则删掉】 \
+  mafgwo/stackedit:【docker中央仓库找到最新版本】
+
+```
+
+## 如何创建三方平台应用
+> 部署时，如果需要支持Gitee或GitHub，则需要自行到对应三方平台创建应用，获取到应用ID和秘钥，替换到以上的环境变量中，再启动应用。
+
+- Gitee的环境变量：GITEE_CLIENT_ID、GITEE_CLIENT_SECRET，**[如何创建Gitee应用](./docs/部署之Gitee应用创建.md)**
+
+- GitHub的环境变量：GITHUB_CLIENT_ID、GITEE_CLIENT_SECRET，**[如何创建GitHub应用](./docs/部署之GitHub应用创建.md)**
+
+- Gitea不需要配置环境变量，而是在关联Gitea账号时，需要填入应用ID和秘钥，**[如何创建Gitea应用](./docs/部署之Gitea应用创建.md)**
+
+
+## 编译与运行
+> 编译运行的nodejs版本选择11.15.0版本
+
+```bash
+# 安装依赖
 npm install
 
 # serve with hot reload at localhost:8080
@@ -29,61 +128,6 @@ npm run build
 npm run build --report
 ```
 
-### Deploy with Helm
-
-StackEdit Helm chart allows easy StackEdit deployment to any Kubernetes cluster.
-You can use it to configure deployment with your existing ingress controller and cert-manager.
-
-```bash
-# Add the StackEdit Helm repository
-helm repo add stackedit https://benweet.github.io/stackedit-charts/
-
-# Update your local Helm chart repository cache
-helm repo update
-
-# Deploy StackEdit chart to your cluster
-helm install --name stackedit stackedit/stackedit \
-  --set dropboxAppKey=$DROPBOX_API_KEY \
-  --set dropboxAppKeyFull=$DROPBOX_FULL_ACCESS_API_KEY \
-  --set googleClientId=$GOOGLE_CLIENT_ID \
-  --set googleApiKey=$GOOGLE_API_KEY \
-  --set githubClientId=$GITHUB_CLIENT_ID \
-  --set githubClientSecret=$GITHUB_CLIENT_SECRET \
-  --set wordpressClientId=\"$WORDPRESS_CLIENT_ID\" \
-  --set wordpressSecret=$WORDPRESS_CLIENT_SECRET
-```
-
-Later, to upgrade StackEdit to the latest version:
-
-```bash
-helm repo update
-helm upgrade stackedit stackedit/stackedit
-```
-
-If you want to uninstall StackEdit:
-
-```bash
-helm delete --purge stackedit
-```
-
-If you want to use your existing ingress controller and cert-manager issuer:
-
-```bash
-# See https://docs.cert-manager.io/en/latest/tutorials/acme/quick-start/index.html
-helm install --name stackedit stackedit/stackedit \
-  --set dropboxAppKey=$DROPBOX_API_KEY \
-  --set dropboxAppKeyFull=$DROPBOX_FULL_ACCESS_API_KEY \
-  --set googleClientId=$GOOGLE_CLIENT_ID \
-  --set googleApiKey=$GOOGLE_API_KEY \
-  --set githubClientId=$GITHUB_CLIENT_ID \
-  --set githubClientSecret=$GITHUB_CLIENT_SECRET \
-  --set wordpressClientId=\"$WORDPRESS_CLIENT_ID\" \
-  --set wordpressSecret=$WORDPRESS_CLIENT_SECRET \
-  --set ingress.enabled=true \
-  --set ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
-  --set ingress.annotations."cert-manager\.io/cluster-issuer"=letsencrypt-prod \
-  --set ingress.hosts[0].host=stackedit.example.com \
-  --set ingress.hosts[0].paths[0]=/ \
-  --set ingress.tls[0].secretName=stackedit-tls \
-  --set ingress.tls[0].hosts[0]=stackedit.example.com
-```
+## 欢迎加群交流
+关于StackEdit，如果你有想法，或者使用中遇到了问题，可以提Issue，如果需要快速得到反馈，可以加QQ群如下（加群后可直接@群主）：
+![](./images/qq.jpeg)

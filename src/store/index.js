@@ -18,6 +18,7 @@ import queue from './queue';
 import syncedContent from './syncedContent';
 import userInfo from './userInfo';
 import workspace from './workspace';
+import img from './img';
 import locationTemplate from './locationTemplate';
 import emptyPublishLocation from '../data/empties/emptyPublishLocation';
 import emptySyncLocation from '../data/empties/emptySyncLocation';
@@ -47,6 +48,7 @@ const store = new Vuex.Store({
     syncLocation: locationTemplate(emptySyncLocation),
     userInfo,
     workspace,
+    img,
   },
   state: {
     light: false,
@@ -132,7 +134,10 @@ const store = new Vuex.Store({
             hash: undefined,
           }), true);
           const extension = item.type === 'syncLocation' ? 'sync' : 'publish';
-          result[id] = `${pathsByItemId[item.fileId]}.${encodedItem}.${extension}`;
+          const path = pathsByItemId[item.fileId];
+          if (path) {
+            result[id] = `${path}.${encodedItem}.${extension}`;
+          }
         }
       });
       return result;

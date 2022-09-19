@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const user = require('./user');
 const github = require('./github');
+const gitee = require('./gitee');
 const pdf = require('./pdf');
 const pandoc = require('./pandoc');
 const conf = require('./conf');
@@ -25,6 +26,7 @@ module.exports = (app) => {
   }
 
   app.get('/oauth2/githubToken', github.githubToken);
+  app.get('/oauth2/giteeToken', gitee.giteeToken);
   app.get('/conf', (req, res) => res.send(conf.publicValues));
   app.get('/userInfo', user.userInfo);
   app.post('/pdfExport', pdf.generate);
@@ -32,9 +34,27 @@ module.exports = (app) => {
   app.post('/paypalIpn', bodyParser.urlencoded({
     extended: false,
   }), user.paypalIpn);
-
+  app.get('/giteeClientId', (req, res) => {
+    const giteeClientIds = conf.values.giteeClientId.split(',');
+    // 仅一个 则直接返回
+    if (giteeClientIds.length === 1) {
+      res.send(giteeClientIds[0]);
+      return;
+    }
+    // 是否随机一个clientId 默认第一个 如果random 为1 则使用随机 避免单个应用接口次数用满无法自动切换其他应用
+    const random = req.query.random;
+    if (!random) {
+      res.send(giteeClientIds[0]);
+      return;
+    }
+    // 随机一个 排除第一个 因为第一个应用接口次数用完了
+    const clientId = giteeClientIds[Math.floor(((giteeClientIds.length - 1) * Math.random())) + 1];
+    res.send(clientId);
+  });
   // Serve landing.html
   app.get('/', (req, res) => res.sendFile(resolvePath('static/landing/index.html')));
+  // Serve privacy_policy.html
+  app.get('/privacy_policy.html', (req, res) => res.sendFile(resolvePath('static/landing/privacy_policy.html')));
   // Serve sitemap.xml
   app.get('/sitemap.xml', (req, res) => res.sendFile(resolvePath('static/sitemap.xml')));
   // Serve callback.html

@@ -76,6 +76,7 @@
 
   .latex,
   .math {
+    font-family: $font-family-monospace;
     color: $editor-color-light;
 
     .app--dark & {
@@ -134,6 +135,10 @@
     background-color: $code-bg;
     border-radius: $code-border-radius;
     padding: 0.15em 0;
+
+    .app--dark & {
+      background-color: $code-dark-bg;
+    }
   }
 
   .img-wrapper {
@@ -251,6 +256,7 @@
   .email,
   .cl-underlined-text {
     text-decoration: underline;
+    color: #d7a55b;
   }
 
   .linkdef .url {
@@ -286,11 +292,7 @@
     }
 
     .cl-underlined-text {
-      color: $editor-color-light-low;
-
-      .app--dark & {
-        color: $editor-color-dark-low;
-      }
+      color: #d7a55b;
     }
   }
 
@@ -299,6 +301,41 @@
 
     .app--dark & {
       color: $editor-color-dark;
+    }
+  }
+
+  .cn-head {
+    color: #dea731;
+
+    .app--dark & {
+      color: #f8bb39;
+    }
+  }
+
+  .cn-strong {
+    color: #db784d;
+
+    .app--dark & {
+      color: #db784d;
+    }
+  }
+
+  .cn-code {
+    color: #59b003;
+
+    .app--dark & {
+      color: #95cc5e;
+    }
+  }
+
+  .cn-toc {
+    color: #d7a55b;
+    font-size: 2.5em;
+    padding: 0.2em;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    .app--dark & {
+      background-color: rgba(0, 0, 0, 0.3);
     }
   }
 }

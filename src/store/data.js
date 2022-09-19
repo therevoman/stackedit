@@ -211,9 +211,13 @@ export default {
     couchdbTokensBySub: (state, { tokensByType }) => tokensByType.couchdb || {},
     dropboxTokensBySub: (state, { tokensByType }) => tokensByType.dropbox || {},
     githubTokensBySub: (state, { tokensByType }) => tokensByType.github || {},
+    giteeTokensBySub: (state, { tokensByType }) => tokensByType.gitee || {},
     gitlabTokensBySub: (state, { tokensByType }) => tokensByType.gitlab || {},
+    giteaTokensBySub: (state, { tokensByType }) => tokensByType.gitea || {},
     wordpressTokensBySub: (state, { tokensByType }) => tokensByType.wordpress || {},
     zendeskTokensBySub: (state, { tokensByType }) => tokensByType.zendesk || {},
+    smmsTokensBySub: (state, { tokensByType }) => tokensByType.smms || {},
+    customTokensBySub: (state, { tokensByType }) => tokensByType.custom || {},
     badgeCreations: getter('badgeCreations'),
     badgeTree: (state, { badgeCreations }) => features
       .map(feature => feature.toBadge(badgeCreations)),
@@ -232,6 +236,21 @@ export default {
   actions: {
     setServerConf: setter('serverConf'),
     setSettings: setter('settings'),
+    switchThemeSetting: ({ commit, getters }) => {
+      const customSettingStr = getters.settings;
+      let { colorTheme } = getters.computedSettings;
+      if (!colorTheme || colorTheme === 'light') {
+        colorTheme = 'dark';
+      } else {
+        colorTheme = 'light';
+      }
+      const themeStr = `colorTheme: ${colorTheme}`;
+      let settingsStr = (customSettingStr && customSettingStr.trim()) || '# 增加您的自定义配置覆盖默认配置';
+      settingsStr = settingsStr.indexOf('colorTheme:') > -1 ?
+        settingsStr.replace(/.*colorTheme:.*/, themeStr) : `${settingsStr}\n${themeStr}`;
+      commit('setItem', itemTemplate('settings', settingsStr));
+      badgeSvc.addBadge('switchTheme');
+    },
     patchLocalSettings: patcher('localSettings'),
     patchLayoutSettings: patcher('layoutSettings'),
     toggleNavigationBar: layoutSettingsToggler('showNavigationBar', 'toggleNavigationBar'),
@@ -303,9 +322,13 @@ export default {
     addCouchdbToken: tokenAdder('couchdb'),
     addDropboxToken: tokenAdder('dropbox'),
     addGithubToken: tokenAdder('github'),
+    addGiteeToken: tokenAdder('gitee'),
     addGitlabToken: tokenAdder('gitlab'),
+    addGiteaToken: tokenAdder('gitea'),
     addWordpressToken: tokenAdder('wordpress'),
     addZendeskToken: tokenAdder('zendesk'),
     patchBadgeCreations: patcher('badgeCreations'),
+    addSmmsToken: tokenAdder('smms'),
+    addCustomToken: tokenAdder('custom'),
   },
 };
